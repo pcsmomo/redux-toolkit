@@ -32,8 +32,8 @@ const Comments = () => {
     dispatch(fetchComments());
   }, [dispatch]);
 
-  return allComments.map((comment) => (
-    <Comment key={comment.id} comment={comment} onDelete={onDelete} />
+  return allComments.map(({ id, body }) => (
+    <Comment key={id} id={id} body={body} onDelete={onDelete} />
   ));
 };
 
