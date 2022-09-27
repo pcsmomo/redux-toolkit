@@ -4,6 +4,8 @@ import {
   fetchComments,
   commentsSelectors,
   deleteComment,
+  patchComment,
+  updateOneComment,
 } from "./commentsSlice";
 import Comment from "./components/Comment";
 
@@ -28,12 +30,31 @@ const Comments = () => {
     [dispatch]
   );
 
+  const onPatch = useCallback(
+    (id, newObj) => dispatch(patchComment({ id, newObj })),
+    [dispatch]
+  );
+
+  const onUpdate = useCallback(
+    (id, newObj) => {
+      dispatch(updateOneComment({ id, changes: newObj }));
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     dispatch(fetchComments());
   }, [dispatch]);
 
   return allComments.map(({ id, body }) => (
-    <Comment key={id} id={id} body={body} onDelete={onDelete} />
+    <Comment
+      key={id}
+      id={id}
+      body={body}
+      onDelete={onDelete}
+      onPatch={onPatch}
+      onUpdate={onUpdate}
+    />
   ));
 };
 

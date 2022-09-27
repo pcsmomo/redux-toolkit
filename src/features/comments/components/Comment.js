@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { Panel, Button, ButtonToolbar } from "rsuite";
 
-const Comment = ({ id, body, onDelete }) => {
+const Comment = ({ id, body, onDelete, onPatch, onUpdate }) => {
   return (
     <Panel header={<h2>{id}</h2>} bordered style={{ margin: 20 }}>
       {body}
@@ -19,7 +19,13 @@ const Comment = ({ id, body, onDelete }) => {
         >
           Delete
         </Button>
-        <Button size="lg" color="cyan" appearance="primary">
+        <Button
+          size="lg"
+          color="cyan"
+          appearance="primary"
+          onClick={() => onPatch(id, { body: "NEW TEXT" })}
+          // onClick={() => onUpdate(id, { body: "NEW TEXT" })}
+        >
           Patch
         </Button>
       </ButtonToolbar>
@@ -31,6 +37,8 @@ Comment.propTypes = {
   id: PropTypes.number.isRequired,
   body: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onPatch: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default memo(Comment);
