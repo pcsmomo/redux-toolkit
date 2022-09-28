@@ -4,17 +4,28 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
+// const BASE_URL = "https://jsonplaceholder.typicode.com?_limit=10";
+const BASE_URL = "http://localhost:3001";
+const SUBJECT = "comments";
+
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
   async () => {
-    return await fetch(
-      "https://jsonplaceholder.typicode.com/comments?_limit=10"
-    ).then((res) => res.json());
+    const data = await fetch(`${BASE_URL}/${SUBJECT}`).then((res) =>
+      res.json()
+    );
+    const likes = data.reduce((prev, curr) => [...prev, curr.likes], []).flat();
+    // console.log(data.reduce((prev, curr) => [...prev, curr.likes], []));
+    // console.log(likes);
+    const tags = data.reduce((prev, curr) => [...prev, curr.tags], []).flat();
+    const comments = data.map(({ id, body }) => ({ id, body }));
+    console.log({ comments, likes, tags });
+    return { comments, likes, tags };
   }
 
   // async (_, { dispatch }) => {
   //   const data = await fetch(
-  //     "https://jsonplaceholder.typicode.com/comments?_limit=10"
+  //     `${BASE_URL}/${SUBJECT}?_limit=10`
   //   ).then((res) => res.json());
   //   dispatch(setAllComments(data));  // it will set
   // }
@@ -23,7 +34,7 @@ export const fetchComments = createAsyncThunk(
 export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async (id) => {
-    await fetch(`https://jsonplaceholder.typicode.com/comments/${id}`, {
+    await fetch(`${BASE_URL}/${SUBJECT}/${id}`, {
       method: "DELETE",
     });
 
@@ -35,14 +46,14 @@ export const patchComment = createAsyncThunk(
   "comments/patchComment",
   async ({ id, newObj }) => {
     // const data = await fetch(
-    //   `https://jsonplaceholder.typicode.com/comments/${id}`,
+    //   `${BASE_URL}/${SUBJECT}/${id}`,
     //   {
     //     method: "PATCH",
     //     body: JSON.stringify(newObj),
     //   }
     // ).then((res) => res.json());
 
-    await fetch(`https://jsonplaceholder.typicode.com/comments/${id}`, {
+    await fetch(`${BASE_URL}/${SUBJECT}/${id}`, {
       method: "PATCH",
       body: JSON.stringify(newObj),
     });
@@ -55,9 +66,21 @@ const commentsAdapter = createEntityAdapter({
   selectId: (comment) => comment.id,
 });
 
+const likesAdapter = createEntityAdapter({
+  selectId: (like) => like.id,
+});
+
+const tagsAdapter = createEntityAdapter({
+  selectId: (tag) => tag.id,
+});
+
 const commentsSlice = createSlice({
   name: "comments",
-  initialState: commentsAdapter.getInitialState({ loading: false }),
+  initialState: commentsAdapter.getInitialState({
+    loading: false,
+    likes: likesAdapter.getInitialState(),
+    tags: tagsAdapter.getInitialState(),
+  }),
   reducers: {
     setAllComments: commentsAdapter.setAll,
     setOneComment: commentsAdapter.removeOne,
@@ -70,7 +93,9 @@ const commentsSlice = createSlice({
     },
     [fetchComments.fulfilled](state, { payload }) {
       state.loading = false;
-      commentsAdapter.setAll(state, payload);
+      commentsAdapter.setAll(state, payload.comments);
+      tagsAdapter.setAll(state.tags, payload.tags);
+      likesAdapter.setAll(state.likes, payload.likes);
     },
     [fetchComments.rejected](state) {
       state.loading = false;

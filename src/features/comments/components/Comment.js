@@ -34,7 +34,7 @@ const Comment = ({ id, body, onDelete, onPatch, onUpdate }) => {
 };
 
 Comment.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   body: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
   onPatch: PropTypes.func.isRequired,
