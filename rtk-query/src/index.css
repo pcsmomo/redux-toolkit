@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
 
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 1.5rem;
 }
 
-input[type="text"], button {
+input[type="text"],
+button {
   font: inherit;
 }
 
@@ -51,8 +52,9 @@ button {
   color: mediumvioletred;
 }
 
-.trash:focus, .trash:hover {
-  filter:brightness(120%)
+.trash:focus,
+.trash:hover {
+  filter: brightness(120%);
 }
 
 form {
@@ -86,6 +88,7 @@ input[type="text"] {
   color: #fff;
 }
 
-.submit:focus, .submit:hover {
+.submit:focus,
+.submit:hover {
   background-color: limegreen;
 }
