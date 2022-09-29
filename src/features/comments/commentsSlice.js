@@ -86,6 +86,13 @@ const commentsSlice = createSlice({
     setOneComment: commentsAdapter.removeOne,
     setManyComments: commentsAdapter.addMany,
     updateOneComment: commentsAdapter.updateOne,
+    removeLikes(state) {
+      likesAdapter.removeAll(state.likes, {});
+    },
+    removeTagById(state, { payload: tagId }) {
+      // a882d44c-0baf-4d26-844e-8f20a0aa8323
+      tagsAdapter.removeOne(state.tags, tagId);
+    },
   },
   extraReducers: {
     [fetchComments.pending](state) {
@@ -138,6 +145,8 @@ export const {
   setOneComment,
   setManyComments,
   updateOneComment,
+  removeLikes,
+  removeTagById,
 } = commentsSlice.actions;
 
 export default commentsSlice.reducer;
