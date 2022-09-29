@@ -2,12 +2,13 @@ import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchComments,
-  commentsSelectors,
   deleteComment,
   patchComment,
   updateOneComment,
   removeLikes,
   removeTagById,
+  commentsSelectors,
+  likesSelectors,
 } from "./commentsSlice";
 import Comment from "./components/Comment";
 import { Button } from "rsuite";
@@ -16,6 +17,7 @@ const Comments = () => {
   const dispatch = useDispatch();
   // const total = useSelector(commentsSelectors.selectTotal);
   const allComments = useSelector(commentsSelectors.selectAll);
+  const allNestedLikes = useSelector(likesSelectors.selectAll);
   // comment select
   // const commentWithId5 = useSelector((state) =>
   //   commentsSelectors.selectById(state, 5)
@@ -48,6 +50,8 @@ const Comments = () => {
   useEffect(() => {
     dispatch(fetchComments());
   }, [dispatch]);
+
+  console.table({ allNestedLikes });
 
   return (
     <>

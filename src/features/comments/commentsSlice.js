@@ -19,7 +19,7 @@ export const fetchComments = createAsyncThunk(
     // console.log(likes);
     const tags = data.reduce((prev, curr) => [...prev, curr.tags], []).flat();
     const comments = data.map(({ id, body }) => ({ id, body }));
-    console.log({ comments, likes, tags });
+    console.table({ comments, likes, tags });
     return { comments, likes, tags };
   }
 
@@ -139,6 +139,10 @@ export const commentsSelectors = commentsAdapter.getSelectors(
 
 // export const { selectIds, selectEntities, selectById, selectTotal, selectAll } =
 //   commentsSelectors;
+
+export const likesSelectors = likesAdapter.getSelectors(
+  (state) => state.comments.likes
+);
 
 export const {
   setAllComments,
