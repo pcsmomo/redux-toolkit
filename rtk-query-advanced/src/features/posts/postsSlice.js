@@ -15,9 +15,9 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData) => {
         let min = 1;
 
-        console.log(new Date());
-        console.log(sub(new Date(), { minutes: 1 }));
-        console.log(sub(new Date(), { minutes: 1 }).toISOString());
+        // console.log(new Date());
+        // console.log(sub(new Date(), { minutes: 1 }));
+        // console.log(sub(new Date(), { minutes: 1 }).toISOString());
         const loadedPosts = responseData.map((post) => {
           if (!post?.date) {
             post.date = sub(new Date(), { minutes: min++ }).toISOString();
@@ -100,6 +100,41 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Post", id: arg.id }],
     }),
+    addReaction: builder.mutation({
+      // so called, OPTIMISTIC UPDATE (update cache)
+      query: ({ postId, reactions }) => ({
+        url: `posts/${postId}`,
+        method: "PATCH",
+        // In a real app, we'd probably need to base this on user ID somehow
+        // so that a user can't do the same reaction more than once
+        body: { reactions },
+      }),
+      // also invalidatesTags are not defined as we don't want to fetch every time
+      async onQueryStarted(
+        { postId, reactions },
+        { dispatch, queryFulfilled }
+      ) {
+        // `updateQueryData` requires the endpoint name and cache key arguments,
+        // so it knows which piece of cache state to update
+        const patchResult = dispatch(
+          extendedApiSlice.util.updateQueryData(
+            "getPosts",
+            undefined,
+            (draft) => {
+              // The `draft` is Immer-wrapped and can be "mutated" like in createSlice
+              const post = draft.entities[postId];
+              if (post) post.reactions = reactions;
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          // we did optimistically updated. If the query fails, it should undo the udpate
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -109,6 +144,7 @@ export const {
   useAddNewPostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useAddReactionMutation,
 } = extendedApiSlice;
 
 // returns the query result object
