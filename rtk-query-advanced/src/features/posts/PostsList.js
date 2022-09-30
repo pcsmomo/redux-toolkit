@@ -4,7 +4,7 @@ import PostsExcerpt from "./PostsExcerpt";
 import { useGetPostsQuery } from "./postsSlice";
 
 const PostsList = () => {
-  const { isLoading, isSuccess, isError, error } = useGetPostsQuery;
+  const { isLoading, isSuccess, isError, error } = useGetPostsQuery();
 
   const orderedPostIds = useSelector(selectPostIds);
 
