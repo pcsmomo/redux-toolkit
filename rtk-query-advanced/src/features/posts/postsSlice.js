@@ -9,7 +9,7 @@ const postsAdapter = createEntityAdapter({
 const initialState = postsAdapter.getInitialState();
 
 export const extendedApiSlice = apiSlice.injectEndpoints({
-  endpoint: (builder) => ({
+  endpoints: (builder) => ({
     getPosts: builder.query({
       query: () => "/posts",
       transformResponse: (responseData) => {
