@@ -8,5 +8,5 @@ export const store = configureStore({
     users: usersReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware), // it manages cache life times
+    getDefaultMiddleware().concat(apiSlice.middleware), // it manages cache life times and expiration
 });
